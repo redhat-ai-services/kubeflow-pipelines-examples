@@ -1,0 +1,25 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+kfp = "*"
+kfp-tekton = "*"
+
+[dev-packages]
+flake8 = "*"
+flake8-import-order = "*"
+flake8-docstrings = "*"
+flake8-builtins = "*"
+flake8-bandit = "*"
+tox = "*"
+pytest = "*"
+tox-pipenv = "*"
+jupyter = "*"
+requests = "*"
+pytest-mock = "*"
+black = {extras = ["jupyter"], version = "*"}
+
+[requires]
+python_version = "3.9"
