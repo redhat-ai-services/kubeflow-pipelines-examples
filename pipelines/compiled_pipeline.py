@@ -1,4 +1,4 @@
-"""Example of a pipeline built from inline functions with kfp."""
+"""Example of a pipeline built from inline functions with kfp and compiled to yaml."""
 import kfp
 
 from kfp_tekton.compiler import TektonCompiler

@@ -1,4 +1,4 @@
-"""Example of a pipeline built from inline functions with kfp."""
+"""Example of a pipeline built from inline functions with kfp and submitted directly to kfp."""
 import os
 import urllib
 
