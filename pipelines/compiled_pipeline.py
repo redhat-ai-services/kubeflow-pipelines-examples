@@ -1,6 +1,8 @@
 """Example of a pipeline built from inline functions with kfp."""
 import kfp
 
+from kfp_tekton.compiler import TektonCompiler
+
 
 def add(a: float, b: float) -> float:
     """Calculate the sum of the two arguments."""
@@ -29,5 +31,4 @@ def add_pipeline(a="1", b="7"):
 
 
 if __name__ == "__main__":
-    kf_endpoint = ""
-    ocp_token = ""
+    TektonCompiler().compile(add_pipeline, package_path="add_pipeline.yaml")
