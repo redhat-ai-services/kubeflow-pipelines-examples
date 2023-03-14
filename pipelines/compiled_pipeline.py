@@ -31,4 +31,6 @@ def add_pipeline(a="1", b="7"):
 
 
 if __name__ == "__main__":
-    TektonCompiler().compile(add_pipeline, package_path="add_pipeline.yaml")
+    TektonCompiler().compile(
+        add_pipeline, package_path=__file__.replace(".py", ".yaml")
+    )
