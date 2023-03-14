@@ -1,10 +1,10 @@
+"""Example pipeline showing a basic connection to kfp server."""
 import os
-
 import urllib
 
-import kfp
-
 from dotenv import load_dotenv
+
+import kfp
 
 load_dotenv()
 
