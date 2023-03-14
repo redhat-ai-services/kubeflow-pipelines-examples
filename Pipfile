@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 kfp = "*"
 kfp-tekton = "*"
+python-dotenv = "*"
 
 [dev-packages]
 flake8 = "*"
@@ -20,6 +21,7 @@ jupyter = "*"
 requests = "*"
 pytest-mock = "*"
 black = {extras = ["jupyter"], version = "*"}
+pre-commit = "*"
 
 [requires]
 python_version = "3.9"
