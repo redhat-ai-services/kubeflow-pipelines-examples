@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b7167bbf14a63e48b70ecfec43c5acc3afdb970f6cd63a47ef34a1788dcd9822"
+            "sha256": "5e7df74a0ff1e0e2d797f3d0d8dd8d9f6b7ace2583a9dd6c849477a97a911aea"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -350,17 +350,10 @@
         },
         "kfp-tekton": {
             "hashes": [
-                "sha256:bb74a8ecab407697c94c441a42e5bd70c48c3198b159e2c8fcb6f43c3d89628d"
+                "sha256:85d17efb56cc145545b284859d4d5d2e9d4bb523d01d3c9dcc3106a3c53e6bc7"
             ],
             "index": "pypi",
-            "version": "==1.6.2"
-        },
-        "kfp-tekton-server-api": {
-            "hashes": [
-                "sha256:2765575419a838dc6f513cfd3c9c53ffca8719cdafac49f36a0e1cec3ca65e39",
-                "sha256:bd468a2d9954fc0775337705f6fff27f0683890e0a75bff0637932cdc206f1dc"
-            ],
-            "version": "==1.5.0"
+            "version": "==1.5.2"
         },
         "kubernetes": {
             "hashes": [
