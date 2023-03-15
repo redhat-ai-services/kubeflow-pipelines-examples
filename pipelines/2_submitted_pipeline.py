@@ -46,4 +46,6 @@ if __name__ == "__main__":
         existing_token=bearer_token,
     )
     arguments = {"a": "7", "b": "8"}
-    client.create_run_from_pipeline_func(add_pipeline, arguments=arguments)
+    client.create_run_from_pipeline_func(
+        add_pipeline, arguments=arguments, experiment_name="submitted-example"
+    )
