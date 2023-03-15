@@ -1,0 +1,9 @@
+# Ignore everything
+*
+
+# Allow specific files
+!.s2iignore
+!.s2i/
+!Pipfile
+!Pipfile.lock
+!components/
