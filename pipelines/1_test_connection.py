@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 import kfp_tekton
 
-load_dotenv()
+load_dotenv(override=True)
 
 kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
 bearer_token = os.environ["BEARER_TOKEN"]
