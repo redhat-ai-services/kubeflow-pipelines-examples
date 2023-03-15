@@ -1,0 +1,43 @@
+name: Build Image
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build Image
+    runs-on: ubuntu-latest
+    env:
+      BASE_IMAGE: "registry.access.redhat.com/ubi8/python-39:latest"
+      REGISTRY: quay.io/rhiap
+      IMAGE_NAME: mlops-demo-iris-message-handler
+      MAIN_TAG: latest-${{ github.sha }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # Setup S2i and Build container image
+      - name: Setup and Build
+        id: build_image
+        uses: redhat-actions/s2i-build@v2
+        with:
+          builder_image: ${{ env.BASE_IMAGE }}
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ env.MAIN_TAG }}
+
+      - name: Add tags
+        run: |
+          docker tag ${{ env.IMAGE_NAME }}:${{ env.MAIN_TAG }} ${{ env.IMAGE_NAME }}:latest
+
+      # Push Image to Quay registry
+      - name: Push To Quay Action
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build_image.outputs.image }}
+          tags: ${{ steps.build_image.outputs.tags }} latest
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
