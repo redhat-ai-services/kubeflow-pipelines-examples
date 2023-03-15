@@ -12,7 +12,7 @@ jobs:
     env:
       BASE_IMAGE: "registry.access.redhat.com/ubi8/python-39:latest"
       REGISTRY: quay.io/rhiap
-      IMAGE_NAME: mlops-demo-iris-message-handler
+      IMAGE_NAME: kubeflow-example
       MAIN_TAG: latest-${{ github.sha }}
 
     steps:
