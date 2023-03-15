@@ -1,4 +1,4 @@
-"""Example of a pipeline built from inline functions with kfp and submitted directly to kfp."""
+"""Example of a pipeline to demonstrate saving metrics from a pipeline."""
 import os
 import urllib
 
@@ -15,7 +15,6 @@ bearer_token = os.environ["BEARER_TOKEN"]
 
 
 def produce_metrics(
-    # Note when the `create_component_from_func` method converts the function to a component, the function parameter "mlpipeline_metrics_path" becomes an output with name "mlpipeline_metrics" which is the correct name for metrics output.
     mlpipeline_metrics_path: kfp.components.OutputPath("Metrics"),
 ):
     import json
