@@ -8,6 +8,8 @@ kfp = "*"
 kfp-tekton = "~=1.5.0"
 python-dotenv = "*"
 scikit-learn = "*"
+pandas = "*"
+kubernetes = "*"
 
 [dev-packages]
 flake8 = "*"
