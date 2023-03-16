@@ -11,22 +11,22 @@ This repo is intended to provide examples for
     ```
 3. Deploy any additional resources required for specific examples in the manifests folder.
 4. Create the .env file
-    a. Copy the example.env file to .env
-    b. Update the `KUBEFLOW_ENDPOINT` url with the URL for your instance of the kubeflow-ui
-    c. Get your token by logging into ocp via oc and running the following command:
+    * Copy the example.env file to .env
+    * Update the `KUBEFLOW_ENDPOINT` url with the URL for your instance of the kubeflow-ui
+    * Get your token by logging into ocp via oc and running the following command:
         ```
         oc whoami --show-token
         ```
 5. Create and activate a virtual environment:
-    a. If not already installed, install pipenv:
+    * If not already installed, install pipenv:
         ```
         pip install pipenv
         ```
-    b. Install packages in a venv
+    * Install packages in a venv
         ```
         pipenv install --dev
         ```
-    c. Activate the venv
+    * Activate the venv
         ```
         pipenv shell
         ```
