@@ -29,9 +29,9 @@ print_envvar_op = kfp.components.create_component_from_func(
 
 
 @kfp.dsl.pipeline(
-    name="Secrets Pipeline",
+    name="Env Vars Pipeline",
 )
-def add_pipeline():
+def env_vars_pipeline():
     """
     Pipeline to add values.
 
@@ -71,5 +71,5 @@ if __name__ == "__main__":
         existing_token=bearer_token,
     )
     client.create_run_from_pipeline_func(
-        add_pipeline, arguments={}, experiment_name="secrets-configmap-example"
+        env_vars_pipeline, arguments={}, experiment_name="secrets-configmap-example"
     )
