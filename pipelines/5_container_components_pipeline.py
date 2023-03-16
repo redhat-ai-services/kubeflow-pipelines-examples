@@ -1,4 +1,9 @@
-"""Example of a pipeline to demonstrate running code built into the container image."""
+"""
+Example of a pipeline to demonstrate running code built into the container image.
+
+This pipeline uses the kfp.dsl.ContainerOp() function which throws some warnings.
+Would be nice to find a better way to run code build into the container image.
+"""
 import os
 import urllib
 
