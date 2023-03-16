@@ -1,4 +1,4 @@
-"""Example pipeline showing a basic connection to kfp server."""
+"""Test showing a basic connection to kfp server."""
 import os
 import urllib
 

@@ -1,4 +1,4 @@
-"""Example of a pipeline built from inline functions with kfp and submitted directly to kfp."""
+"""Example of a pipeline submitted directly to kfp."""
 import os
 import urllib
 
@@ -26,8 +26,7 @@ add_op = kfp.components.create_component_from_func(
 
 
 @kfp.dsl.pipeline(
-    name="Inline Function Pipeline",
-    description="A pipeline that is built from inline functions",
+    name="Submitted Pipeline",
 )
 def add_pipeline(a="1", b="7"):
     """

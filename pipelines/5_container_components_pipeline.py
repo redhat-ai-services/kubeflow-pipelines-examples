@@ -1,3 +1,4 @@
+"""Example of a pipeline to demonstrate running code built into the container image."""
 import os
 import urllib
 
