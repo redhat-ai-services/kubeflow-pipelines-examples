@@ -12,6 +12,7 @@ This repo is intended to provide examples for different features of kubeflow pip
 3. Deploy any additional resources required for specific examples in the manifests folder.
 4. Create the .env file
     * Copy the example.env file to .env
+    * Update the storage class if you are not utilizing ODF
     * Update the `KUBEFLOW_ENDPOINT` url with the URL for your instance of the kubeflow-ui
     * Get your token by logging into ocp via oc and running the following command and setting the result as `BEARER_TOKEN`:
         ```
