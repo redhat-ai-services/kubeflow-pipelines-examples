@@ -1,6 +1,6 @@
 # kubeflow-examples
 
-This repo is intended to provide examples for
+This repo is intended to provide examples for different features of kubeflow pipelines on OpenShift.
 
 ## Quick Start
 
