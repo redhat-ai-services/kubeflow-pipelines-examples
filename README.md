@@ -13,7 +13,7 @@ This repo is intended to provide examples for different features of kubeflow pip
 4. Create the .env file
     * Copy the example.env file to .env
     * Update the `KUBEFLOW_ENDPOINT` url with the URL for your instance of the kubeflow-ui
-    * Get your token by logging into ocp via oc and running the following command:
+    * Get your token by logging into ocp via oc and running the following command and setting the result as `BEARER_TOKEN`:
         ```
         oc whoami --show-token
         ```
