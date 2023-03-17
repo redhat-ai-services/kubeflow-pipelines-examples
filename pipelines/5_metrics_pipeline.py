@@ -50,12 +50,6 @@ produce_metrics_op = kfp.components.create_component_from_func(
     name="metrics pipeline",
 )
 def metrics_pipeline():
-    """
-    Pipeline to add values.
-
-    Pipeline to take the value of a, add 4 to it and then
-    perform a second task to take the put of the first task and add b.
-    """
     produce_metrics_task = produce_metrics_op()  # noqa: F841
 
 
