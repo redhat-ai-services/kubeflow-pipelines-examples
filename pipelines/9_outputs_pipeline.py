@@ -1,4 +1,4 @@
-"""Example of a pipeline submitted directly to kfp."""
+"""Example of a pipeline returning multiple values."""
 import os
 from typing import NamedTuple
 import urllib
