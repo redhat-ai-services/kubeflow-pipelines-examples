@@ -29,7 +29,7 @@ def add_pipeline(a="1", b="7"):
     Pipeline to take the value of a, add 4 to it and then
     perform a second task to take the put of the first task and add b.
     """
-    add_op = kfp.dsl.ContainerOp(
+    add_op = kfp.dsl.ContainerOp(  # noqa: F841
         name="add",
         image="quay.io/rhiap/kubeflow-example:latest",
         command=["sh", "-c"],

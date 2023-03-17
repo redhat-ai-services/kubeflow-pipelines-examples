@@ -44,7 +44,7 @@ get_iris_data_op = kfp.components.create_component_from_func(
     name="Additional Packages Pipeline",
 )
 def additional_packages_pipeline():
-    get_iris_data_task = get_iris_data_op()
+    get_iris_data_task = get_iris_data_op()  # noqa: F841
 
 
 if __name__ == "__main__":

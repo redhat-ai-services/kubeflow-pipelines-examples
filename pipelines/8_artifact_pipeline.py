@@ -8,7 +8,6 @@ import kfp
 
 import kfp_tekton
 
-import kubernetes
 
 load_dotenv(override=True)
 
@@ -50,7 +49,7 @@ consume_artifact_op = kfp.components.create_component_from_func(
 )
 def artifact_pipeline():
     create_artifact_task = create_artifact_op()
-    consume_artifact_task = consume_artifact_op(
+    consume_artifact_task = consume_artifact_op(  # noqa: F841
         create_artifact_task.outputs["my_artifact"]
     )
 

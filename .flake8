@@ -3,7 +3,7 @@ exclude = .tox,.venv
 max-line-length = 120
 # If you need to ignore some error codes in the whole source code
 # you can write them here
-# ignore = D100,D101
+ignore = S101
 per-file-ignores =
     tests/*: S101,D100,D103,D104
     __init__.py: D104

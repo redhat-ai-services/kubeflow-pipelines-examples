@@ -7,8 +7,6 @@ get a visualization functioning.
 import os
 import urllib
 
-from typing import NamedTuple
-
 from dotenv import load_dotenv
 
 import kfp
@@ -26,8 +24,6 @@ def confusion_matrix_viz(
     confusion_matrix_path: kfp.components.OutputPath(),
 ):
     import json
-    import os
-    import pathlib
 
     cf = """
     16,0,0
