@@ -1,4 +1,9 @@
-"""Example of a pipeline to demonstrate saving metrics from a pipeline."""
+"""
+Example of a pipeline to demonstrate saving metrics from a pipeline.
+
+runMetrics appear to be depreciated in kfp v2 api so implement
+this feature at your own risk.
+"""
 import os
 import urllib
 
