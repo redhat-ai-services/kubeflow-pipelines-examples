@@ -1,4 +1,4 @@
-"""Example of a pipeline to demonstrate accessing secrets/config maps in a pipeline."""
+"""Example of a pipeline to demonstrate a simple data science workflow."""
 import os
 import urllib
 
