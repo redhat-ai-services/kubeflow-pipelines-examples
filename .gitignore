@@ -1,5 +1,7 @@
 metrics/**
 
+pipelines/*.yaml
+
 # Mac directory meta file
 .DS_Store
 
