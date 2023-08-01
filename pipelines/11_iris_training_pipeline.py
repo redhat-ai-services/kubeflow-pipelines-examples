@@ -1,6 +1,5 @@
 """Example of a pipeline to demonstrate a simple data science workflow."""
 import os
-import urllib
 
 from dotenv import load_dotenv
 
@@ -222,7 +221,7 @@ def iris_pipeline(model_obc: str = "iris-model"):
 if __name__ == "__main__":
     print(f"Connecting to kfp: {kubeflow_endpoint}")
     client = kfp_tekton.TektonClient(
-        host=urllib.parse.urljoin(kubeflow_endpoint, "/pipeline"),
+        host=kubeflow_endpoint,
         existing_token=bearer_token,
     )
     result = client.create_run_from_pipeline_func(

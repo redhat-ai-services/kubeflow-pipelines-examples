@@ -5,7 +5,6 @@ The visualization doesn't work for this.  PR's are welcome to help
 get a visualization functioning.
 """
 import os
-import urllib
 
 from dotenv import load_dotenv
 
@@ -79,7 +78,7 @@ def visualization_pipeline():
 
 if __name__ == "__main__":
     client = kfp_tekton.TektonClient(
-        host=urllib.parse.urljoin(kubeflow_endpoint, "/pipeline"),
+        host=kubeflow_endpoint,
         existing_token=bearer_token,
     )
     client.create_run_from_pipeline_func(

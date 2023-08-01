@@ -1,6 +1,5 @@
 """Example of a pipeline to demonstrate accessing secrets/config maps in a pipeline."""
 import os
-import urllib
 
 from dotenv import load_dotenv
 
@@ -56,7 +55,7 @@ def artifact_pipeline():
 
 if __name__ == "__main__":
     client = kfp_tekton.TektonClient(
-        host=urllib.parse.urljoin(kubeflow_endpoint, "/pipeline"),
+        host=kubeflow_endpoint,
         existing_token=bearer_token,
     )
     client.create_run_from_pipeline_func(

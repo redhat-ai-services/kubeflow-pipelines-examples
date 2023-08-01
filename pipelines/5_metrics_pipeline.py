@@ -5,7 +5,6 @@ runMetrics appear to be depreciated in kfp v2 api so implement
 this feature at your own risk.
 """
 import os
-import urllib
 
 from dotenv import load_dotenv
 
@@ -60,7 +59,7 @@ def metrics_pipeline():
 
 if __name__ == "__main__":
     client = kfp_tekton.TektonClient(
-        host=urllib.parse.urljoin(kubeflow_endpoint, "/pipeline"),
+        host=kubeflow_endpoint,
         existing_token=bearer_token,
     )
     arguments = {}

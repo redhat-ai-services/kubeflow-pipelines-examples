@@ -1,6 +1,5 @@
 """Example of a pipeline to demonstrate mounting a pvc to a task in a pipeline."""
 import os
-import urllib
 
 from dotenv import load_dotenv
 
@@ -53,7 +52,7 @@ def add_pipeline(a="1", b="7"):
 
 if __name__ == "__main__":
     client = kfp_tekton.TektonClient(
-        host=urllib.parse.urljoin(kubeflow_endpoint, "/pipeline"),
+        host=kubeflow_endpoint,
         existing_token=bearer_token,
     )
     arguments = {"a": "7", "b": "8"}

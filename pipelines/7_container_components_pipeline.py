@@ -5,7 +5,6 @@ This pipeline uses the kfp.dsl.ContainerOp() function which throws some warnings
 Would be nice to find a better way to run code build into the container image.
 """
 import os
-import urllib
 
 from dotenv import load_dotenv
 
@@ -39,7 +38,7 @@ def add_pipeline(a="1", b="7"):
 
 if __name__ == "__main__":
     client = kfp_tekton.TektonClient(
-        host=urllib.parse.urljoin(kubeflow_endpoint, "/pipeline"),
+        host=kubeflow_endpoint,
         existing_token=bearer_token,
     )
     arguments = {"a": "7", "b": "8"}

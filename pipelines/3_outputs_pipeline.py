@@ -1,7 +1,6 @@
 """Example of a pipeline returning multiple values."""
 import os
 from typing import NamedTuple
-import urllib
 
 from dotenv import load_dotenv
 
@@ -45,7 +44,7 @@ def multiple_values_pipeline(a="1", b="7"):
 
 if __name__ == "__main__":
     client = kfp_tekton.TektonClient(
-        host=urllib.parse.urljoin(kubeflow_endpoint, "/pipeline"),
+        host=kubeflow_endpoint,
         existing_token=bearer_token,
     )
     arguments = {"a": "7", "b": "8"}
