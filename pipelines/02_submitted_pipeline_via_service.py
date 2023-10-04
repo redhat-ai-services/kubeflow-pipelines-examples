@@ -42,6 +42,7 @@ if __name__ == "__main__":
     # Check if the script is running in a k8s pod
     # Read the service account token if it is
     # Get the bearer token from an env var if it is not
+    # Note: The service account needs permission to access DSP instance in RBAC.
     sa_token_path = "/run/secrets/kubernetes.io/serviceaccount/token"
     if os.path.isfile(sa_token_path):
         with open(sa_token_path, "r") as f:
