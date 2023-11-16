@@ -10,8 +10,6 @@ import kfp_tekton
 load_dotenv(override=True)
 
 kubeflow_endpoint = "https://ds-pipeline-pipeline-defenition:9000"
-bearer_token = os.environ["BEARER_TOKEN"]
-
 
 def add(a: float, b: float) -> float:
     """Calculate the sum of the two arguments."""
@@ -61,7 +59,7 @@ if __name__ == "__main__":
 
     client = kfp_tekton.TektonClient(
         host=kubeflow_endpoint,
-        existing_token=bearer_token,
+        existing_token=token,
         ssl_ca_cert=ssl_ca_cert,
     )
 
