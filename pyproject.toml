@@ -1,0 +1,18 @@
+[project]
+name = "kfp-examples"
+version = "0.0.1"
+
+[tool.ruff]
+line-length = 120
+extend-include = ["*.ipynb"]
+
+[tool.ruff.lint]
+select = [
+  "A",   # flake8-builtins
+  "E",   # pycodestyle
+  "F",   # pyflakes
+  "UP",  # pyupgrade,
+  "I",   # isort
+  "S",   # bandit
+  "N",   # pep8-naming
+]

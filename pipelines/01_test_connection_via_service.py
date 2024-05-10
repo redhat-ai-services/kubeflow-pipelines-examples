@@ -1,22 +1,22 @@
 """Test showing a connection to kfp server using a service."""
+
 import os
 
+import kfp
 from dotenv import load_dotenv
-
-import kfp_tekton
 
 load_dotenv(override=True)
 
-kubeflow_endpoint = "https://ds-pipeline-pipeline-defenition:9000"
+kubeflow_endpoint = "https://ds-pipeline-dspa:8443"
 bearer_token = os.environ["BEARER_TOKEN"]
 
 if __name__ == "__main__":
     # Check if the script is running in a k8s pod
     # Read the service account token if it is
     # Get the bearer token from an env var if it is not
-    sa_token_path = "/run/secrets/kubernetes.io/serviceaccount/token"
+    sa_token_path = "/run/secrets/kubernetes.io/serviceaccount/token"  # noqa: S105
     if os.path.isfile(sa_token_path):
-        with open(sa_token_path, "r") as f:
+        with open(sa_token_path) as f:
             token = f.read().rstrip()
     else:
         token = os.environ["BEARER_TOKEN"]
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     else:
         ssl_ca_cert = None
 
-    client = kfp_tekton.TektonClient(
+    client = kfp.Client(
         host=kubeflow_endpoint,
         existing_token=bearer_token,
         ssl_ca_cert=ssl_ca_cert,

@@ -1,12 +1,10 @@
 """Example of a pipeline to demonstrate accessing secrets/config maps in a pipeline."""
+
 import os
 
+import kfp.compiler
 from dotenv import load_dotenv
-
-import kfp
-
-import kfp_tekton
-
+from kfp import dsl
 
 load_dotenv(override=True)
 
@@ -14,50 +12,39 @@ kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
 bearer_token = os.environ["BEARER_TOKEN"]
 
 
-def create_artifact(my_artifact: kfp.components.OutputPath()):
+@dsl.component(base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest")
+def create_artifact(my_artifact: dsl.Output[dsl.Artifact]):
     import pickle
 
     artifact = "1, 2, 3, 4"
 
-    with open(my_artifact, "bw") as f:
+    with open(my_artifact.path, "bw") as f:
         pickle.dump(artifact, f)
 
 
-def consume_artifact(my_artifact: kfp.components.InputPath()):
+@dsl.component(base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest")
+def consume_artifact(my_artifact: dsl.Input[dsl.Artifact]):
     import pickle
 
-    with open(my_artifact, "br") as f:
-        artifact = pickle.load(f)
+    with open(my_artifact.path, "br") as f:
+        artifact = pickle.load(f)  # noqa: S301
 
     print(artifact)
-
-
-create_artifact_op = kfp.components.create_component_from_func(
-    create_artifact,
-    base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
-)
-
-consume_artifact_op = kfp.components.create_component_from_func(
-    consume_artifact,
-    base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
-)
 
 
 @kfp.dsl.pipeline(
     name="Artifact Pipeline",
 )
 def artifact_pipeline():
-    create_artifact_task = create_artifact_op()
-    consume_artifact_task = consume_artifact_op(  # noqa: F841
-        create_artifact_task.outputs["my_artifact"]
+    create_artifact_task = create_artifact()
+    consume_artifact_task = consume_artifact(  # noqa: F841
+        my_artifact=create_artifact_task.outputs["my_artifact"]
     )
 
 
 if __name__ == "__main__":
-    client = kfp_tekton.TektonClient(
+    client = kfp.Client(
         host=kubeflow_endpoint,
         existing_token=bearer_token,
     )
-    client.create_run_from_pipeline_func(
-        artifact_pipeline, arguments={}, experiment_name="artifact-example"
-    )
+    client.create_run_from_pipeline_func(artifact_pipeline, arguments={}, experiment_name="artifact-example")
