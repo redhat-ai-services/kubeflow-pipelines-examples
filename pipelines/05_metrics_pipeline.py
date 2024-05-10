@@ -8,18 +8,19 @@ import os
 
 from dotenv import load_dotenv
 
-import kfp
-
-import kfp_tekton
+from kfp import dsl
+import kfp.compiler
 
 load_dotenv(override=True)
 
 kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
 bearer_token = os.environ["BEARER_TOKEN"]
 
-
+@dsl.component(
+    base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest"
+)
 def produce_metrics(
-    mlpipeline_metrics_path: kfp.components.OutputPath("Metrics"),
+    mlpipeline_metrics_path: dsl.OutputPath("Metrics"),
 ):
     import json
 
@@ -44,21 +45,15 @@ def produce_metrics(
         json.dump(metrics, f)
 
 
-produce_metrics_op = kfp.components.create_component_from_func(
-    produce_metrics,
-    base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
-)
-
-
 @kfp.dsl.pipeline(
     name="metrics pipeline",
 )
 def metrics_pipeline():
-    produce_metrics_task = produce_metrics_op()  # noqa: F841
+    produce_metrics_task = produce_metrics()  # noqa: F841
 
 
 if __name__ == "__main__":
-    client = kfp_tekton.TektonClient(
+    client = kfp.Client(
         host=kubeflow_endpoint,
         existing_token=bearer_token,
     )
