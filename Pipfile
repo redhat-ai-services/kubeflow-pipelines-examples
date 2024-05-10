@@ -11,18 +11,8 @@ pandas = "*"
 kubernetes = "*"
 
 [dev-packages]
-flake8 = "*"
-flake8-import-order = "*"
-flake8-docstrings = "*"
-flake8-builtins = "*"
-flake8-bandit = "*"
-tox = "*"
-pytest = "*"
-tox-pipenv = "*"
+ruff = "*"
 jupyter = "*"
-requests = "*"
-pytest-mock = "*"
-black = {extras = ["jupyter"], version = "*"}
 pre-commit = "*"
 
 [requires]
