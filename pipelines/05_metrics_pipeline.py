@@ -4,6 +4,7 @@ Example of a pipeline to demonstrate saving metrics from a pipeline.
 runMetrics appear to be depreciated in kfp v2 api so implement
 this feature at your own risk.
 """
+
 import os
 
 from dotenv import load_dotenv
@@ -15,6 +16,7 @@ load_dotenv(override=True)
 
 kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
 bearer_token = os.environ["BEARER_TOKEN"]
+
 
 @dsl.component(
     base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest"

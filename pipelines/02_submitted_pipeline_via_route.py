@@ -1,4 +1,5 @@
 """Example of a pipeline submitted directly to kfp."""
+
 import os
 
 from dotenv import load_dotenv
@@ -33,7 +34,7 @@ def add_pipeline(a: float = 1.0, b: float = 7.0):
 
 
 if __name__ == "__main__":
-    client =kfp.Client(
+    client = kfp.Client(
         host=kubeflow_endpoint,
         existing_token=bearer_token,
     )

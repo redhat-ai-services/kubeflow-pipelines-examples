@@ -1,6 +1,7 @@
 """
 Example of a pipeline to demonstrate a simple real world data science workflow.
 """
+
 import os
 
 from dotenv import load_dotenv
@@ -14,6 +15,7 @@ load_dotenv(override=True)
 
 kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
 bearer_token = os.environ["BEARER_TOKEN"]
+
 
 @dsl.component(
     base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
@@ -74,12 +76,14 @@ def data_prep(
     save_pickle(y_train_file.path, y_train)
     save_pickle(y_test_file.path, y_test)
 
+
 @dsl.component(
     base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
     packages_to_install=["pandas", "scikit-learn"],
 )
 def validate_data():
     pass
+
 
 @dsl.component(
     base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
@@ -119,6 +123,7 @@ def train_model(
 
     save_pickle(model_file.path, model)
 
+
 @dsl.component(
     base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
     packages_to_install=["pandas", "scikit-learn"],
@@ -141,13 +146,14 @@ def validate_model(model_file: dsl.Input[dsl.Model]):
 
     print(f"Response: {result}")
 
+
 @dsl.component(
     base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
     packages_to_install=["pandas", "scikit-learn"],
 )
 def evaluate_model(
     X_test_file: dsl.Input[dsl.Dataset],
-    y_test_file:dsl.Input[dsl.Dataset],
+    y_test_file: dsl.Input[dsl.Dataset],
     model_file: dsl.Input[dsl.Model],
     mlpipeline_metrics_file: dsl.Output[dsl.Metrics],
 ):
@@ -192,17 +198,19 @@ def iris_pipeline(model_obc: str = "iris-model"):
     data_prep_task = data_prep()
 
     train_model_task = train_model(
-        X_train_file = data_prep_task.outputs["X_train_file"],
-        y_train_file = data_prep_task.outputs["y_train_file"],
+        X_train_file=data_prep_task.outputs["X_train_file"],
+        y_train_file=data_prep_task.outputs["y_train_file"],
     )
 
     evaluate_model_task = evaluate_model(  # noqa: F841
-        X_test_file = data_prep_task.outputs["X_test_file"],
-        y_test_file = data_prep_task.outputs["y_test_file"],
-        model_file = train_model_task.output,
+        X_test_file=data_prep_task.outputs["X_test_file"],
+        y_test_file=data_prep_task.outputs["y_test_file"],
+        model_file=train_model_task.output,
     )
 
-    validate_model_task = validate_model(model_file = train_model_task.output)  # noqa: F841
+    validate_model_task = validate_model(
+        model_file=train_model_task.output
+    )  # noqa: F841
 
 
 if __name__ == "__main__":

@@ -3,6 +3,7 @@ Example of a pipeline to demonstrate accessing secrets/config maps in a pipeline
 
 This pipeline example is currently broken.
 """
+
 import os
 
 from dotenv import load_dotenv
@@ -16,6 +17,7 @@ load_dotenv(override=True)
 
 kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
 bearer_token = os.environ["BEARER_TOKEN"]
+
 
 @dsl.component(
     base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest"
@@ -37,9 +39,10 @@ def env_vars_pipeline():
     Pipeline to take the value of a, add 4 to it and then
     perform a second task to take the put of the first task and add b.
     """
-    secret_print_task = print_envvar(env_var = "my-env-var")
+    secret_print_task = print_envvar(env_var="my-env-var")
 
-    secret_print_task.set_env_variable("my-env-var",
+    secret_print_task.set_env_variable(
+        "my-env-var",
         kubernetes.client.V1EnvVar(
             name="my-env-var",
             value_from=kubernetes.client.V1EnvVarSource(
@@ -47,12 +50,13 @@ def env_vars_pipeline():
                     name="my-secret", key="my-secret-data"
                 )
             ),
-        )
+        ),
     )
 
-    cm_print_task = print_envvar(env_var = "my-env-var")
+    cm_print_task = print_envvar(env_var="my-env-var")
 
-    cm_print_task.set_env_variable( "my-env-var",
+    cm_print_task.set_env_variable(
+        "my-env-var",
         kubernetes.client.V1EnvVar(
             name="my-env-var",
             value_from=kubernetes.client.V1EnvVarSource(
@@ -60,7 +64,7 @@ def env_vars_pipeline():
                     name="my-configmap", key="my-configmap-data"
                 )
             ),
-        )
+        ),
     )
 
 

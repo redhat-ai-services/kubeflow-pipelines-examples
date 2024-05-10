@@ -1,4 +1,5 @@
 """Test showing a connection to kfp server using a service."""
+
 import os
 
 from dotenv import load_dotenv
@@ -30,7 +31,7 @@ if __name__ == "__main__":
     else:
         ssl_ca_cert = None
 
-    client =kfp.Client(
+    client = kfp.Client(
         host=kubeflow_endpoint,
         existing_token=bearer_token,
         ssl_ca_cert=ssl_ca_cert,

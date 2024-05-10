@@ -1,4 +1,5 @@
 """Example of a pipeline returning multiple values."""
+
 import os
 from typing import NamedTuple
 
@@ -11,6 +12,7 @@ load_dotenv(override=True)
 
 kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
 bearer_token = os.environ["BEARER_TOKEN"]
+
 
 @dsl.component(
     base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest"
@@ -26,10 +28,11 @@ def return_multiple_values(
     outputs = namedtuple("outputs", ["sum", "product"])
     return outputs(sum, product)
 
+
 @kfp.dsl.pipeline(
     name="Submitted Pipeline",
 )
-def multiple_values_pipeline(a: float = 1.0, b: float=7.0):
+def multiple_values_pipeline(a: float = 1.0, b: float = 7.0):
     first_task = return_multiple_values(a=a, b=b)
     second_task = return_multiple_values(  # noqa: F841
         a=first_task.outputs["sum"], b=first_task.outputs["product"]
@@ -37,7 +40,7 @@ def multiple_values_pipeline(a: float = 1.0, b: float=7.0):
 
 
 if __name__ == "__main__":
-    client =kfp.Client(
+    client = kfp.Client(
         host=kubeflow_endpoint,
         existing_token=bearer_token,
     )

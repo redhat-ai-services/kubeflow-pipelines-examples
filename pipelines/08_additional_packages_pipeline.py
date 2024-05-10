@@ -1,4 +1,5 @@
 """Example of a pipeline to demonstrate installing additional packages in the pipeline."""
+
 import os
 
 from dotenv import load_dotenv
@@ -10,6 +11,7 @@ load_dotenv(override=True)
 
 kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
 bearer_token = os.environ["BEARER_TOKEN"]
+
 
 @dsl.component(
     base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",

@@ -3,6 +3,7 @@
 from kfp import dsl
 import kfp.compiler
 
+
 @dsl.component(
     base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest"
 )

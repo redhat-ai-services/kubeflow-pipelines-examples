@@ -1,4 +1,5 @@
 """Example of a pipeline submitted directly to kfp."""
+
 import os
 
 from dotenv import load_dotenv
@@ -9,6 +10,7 @@ import kfp.compiler
 load_dotenv(override=True)
 
 kubeflow_endpoint = "https://ds-pipeline-dspa:8443"
+
 
 @dsl.component(
     base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest"
@@ -51,7 +53,7 @@ if __name__ == "__main__":
     else:
         ssl_ca_cert = None
 
-    client =kfp.Client(
+    client = kfp.Client(
         host=kubeflow_endpoint,
         existing_token=token,
         ssl_ca_cert=ssl_ca_cert,

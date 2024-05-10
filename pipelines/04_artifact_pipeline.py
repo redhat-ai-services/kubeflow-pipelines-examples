@@ -1,4 +1,5 @@
 """Example of a pipeline to demonstrate accessing secrets/config maps in a pipeline."""
+
 import os
 
 from dotenv import load_dotenv
@@ -12,6 +13,7 @@ load_dotenv(override=True)
 kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
 bearer_token = os.environ["BEARER_TOKEN"]
 
+
 @dsl.component(
     base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest"
 )
@@ -22,6 +24,7 @@ def create_artifact(my_artifact: dsl.Output[dsl.Artifact]):
 
     with open(my_artifact.path, "bw") as f:
         pickle.dump(artifact, f)
+
 
 @dsl.component(
     base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest"
@@ -41,7 +44,7 @@ def consume_artifact(my_artifact: dsl.Input[dsl.Artifact]):
 def artifact_pipeline():
     create_artifact_task = create_artifact()
     consume_artifact_task = consume_artifact(  # noqa: F841
-        my_artifact = create_artifact_task.outputs["my_artifact"]
+        my_artifact=create_artifact_task.outputs["my_artifact"]
     )
 
 

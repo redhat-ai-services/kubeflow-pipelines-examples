@@ -6,6 +6,7 @@ get a visualization functioning.
 
 This pipeline example is currently broken.
 """
+
 import os
 
 from dotenv import load_dotenv
@@ -18,12 +19,13 @@ load_dotenv(override=True)
 kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
 bearer_token = os.environ["BEARER_TOKEN"]
 
+
 @dsl.component(
     base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest"
 )
 def confusion_matrix_viz(
     mlpipeline_ui_metadata_path: dsl.OutputPath(),
-    confusion_matrix_path: dsl.OutputPath()
+    confusion_matrix_path: dsl.OutputPath(),
 ):
     import json
 
