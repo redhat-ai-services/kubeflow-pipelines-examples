@@ -2,10 +2,9 @@
 
 import os
 
-from dotenv import load_dotenv
-
-from kfp import dsl
 import kfp.compiler
+from dotenv import load_dotenv
+from kfp import dsl
 
 load_dotenv(override=True)
 
@@ -19,7 +18,6 @@ bearer_token = os.environ["BEARER_TOKEN"]
 )
 def get_iris_data():
     import pandas as pd
-
     from sklearn import datasets
 
     iris = datasets.load_iris()

@@ -3,10 +3,9 @@
 import os
 from typing import NamedTuple
 
-from dotenv import load_dotenv
-
-from kfp import dsl
 import kfp.compiler
+from dotenv import load_dotenv
+from kfp import dsl
 
 load_dotenv(override=True)
 
@@ -14,19 +13,15 @@ kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
 bearer_token = os.environ["BEARER_TOKEN"]
 
 
-@dsl.component(
-    base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest"
-)
-def return_multiple_values(
-    a: float, b: float
-) -> NamedTuple("outputs", [("sum", float), ("product", float)]):
+@dsl.component(base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest")
+def return_multiple_values(a: float, b: float) -> NamedTuple("outputs", [("sum", float), ("product", float)]):
     from collections import namedtuple
 
-    sum = a + b
-    product = a * b
+    sum_result = a + b
+    product_result = a * b
 
     outputs = namedtuple("outputs", ["sum", "product"])
-    return outputs(sum, product)
+    return outputs(sum_result, product_result)
 
 
 @kfp.dsl.pipeline(

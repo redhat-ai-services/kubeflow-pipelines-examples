@@ -2,9 +2,8 @@
 
 import os
 
-from dotenv import load_dotenv
-
 import kfp
+from dotenv import load_dotenv
 
 load_dotenv(override=True)
 
@@ -15,9 +14,9 @@ if __name__ == "__main__":
     # Check if the script is running in a k8s pod
     # Read the service account token if it is
     # Get the bearer token from an env var if it is not
-    sa_token_path = "/run/secrets/kubernetes.io/serviceaccount/token"
+    sa_token_path = "/run/secrets/kubernetes.io/serviceaccount/token"  # noqa: S105
     if os.path.isfile(sa_token_path):
-        with open(sa_token_path, "r") as f:
+        with open(sa_token_path) as f:
             token = f.read().rstrip()
     else:
         token = os.environ["BEARER_TOKEN"]
