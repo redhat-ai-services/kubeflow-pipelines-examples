@@ -3,11 +3,11 @@ import os
 
 from dotenv import load_dotenv
 
-import kfp_tekton
+import kfp
 
 load_dotenv(override=True)
 
-kubeflow_endpoint = "https://ds-pipeline-pipeline-defenition:9000"
+kubeflow_endpoint = "https://ds-pipeline-dspa:8443"
 bearer_token = os.environ["BEARER_TOKEN"]
 
 if __name__ == "__main__":
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     else:
         ssl_ca_cert = None
 
-    client = kfp_tekton.TektonClient(
+    client =kfp.Client(
         host=kubeflow_endpoint,
         existing_token=bearer_token,
         ssl_ca_cert=ssl_ca_cert,
