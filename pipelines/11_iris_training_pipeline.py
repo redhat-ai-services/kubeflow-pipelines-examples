@@ -1,7 +1,5 @@
 """
-Example of a pipeline to demonstrate a simple data science workflow.
-
-This pipeline example is currently broken.
+Example of a pipeline to demonstrate a simple real world data science workflow.
 """
 import os
 
@@ -22,10 +20,10 @@ bearer_token = os.environ["BEARER_TOKEN"]
     packages_to_install=["pandas", "scikit-learn"],
 )
 def data_prep(
-    X_train_file: dsl.OutputPath(),
-    X_test_file: dsl.OutputPath(),
-    y_train_file: dsl.OutputPath(),
-    y_test_file: dsl.OutputPath(),
+    X_train_file: dsl.Output[dsl.Dataset],
+    X_test_file: dsl.Output[dsl.Dataset],
+    y_train_file: dsl.Output[dsl.Dataset],
+    y_test_file: dsl.Output[dsl.Dataset],
 ):
     import pickle
 
@@ -71,10 +69,10 @@ def data_prep(
     dataset = get_iris_data()
     X_train, X_test, y_train, y_test = create_training_set(dataset)
 
-    save_pickle(X_train_file, X_train)
-    save_pickle(X_test_file, X_test)
-    save_pickle(y_train_file, y_train)
-    save_pickle(y_test_file, y_test)
+    save_pickle(X_train_file.path, X_train)
+    save_pickle(X_test_file.path, X_test)
+    save_pickle(y_train_file.path, y_train)
+    save_pickle(y_test_file.path, y_test)
 
 @dsl.component(
     base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
@@ -88,13 +86,15 @@ def validate_data():
     packages_to_install=["pandas", "scikit-learn"],
 )
 def train_model(
-    X_train_file: dsl.InputPath(),
-    y_train_file: dsl.InputPath(),
-    model_file: dsl.OutputPath(),
+    X_train_file: dsl.Input[dsl.Dataset],
+    y_train_file: dsl.Input[dsl.Dataset],
+    model_file: dsl.Output[dsl.Model],
 ):
     import pickle
 
     from sklearn.ensemble import RandomForestClassifier
+
+    import pandas as pd
 
     def load_pickle(object_file):
         with open(object_file, "rb") as f:
@@ -112,18 +112,18 @@ def train_model(
 
         return model
 
-    X_train = load_pickle(X_train_file)
-    y_train = load_pickle(y_train_file)
+    X_train = load_pickle(X_train_file.path)
+    y_train = load_pickle(y_train_file.path)
 
     model = train_iris(X_train, y_train)
 
-    save_pickle(model_file, model)
+    save_pickle(model_file.path, model)
 
 @dsl.component(
     base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
     packages_to_install=["pandas", "scikit-learn"],
 )
-def validate_model(model_file: dsl.InputPath()):
+def validate_model(model_file: dsl.Input[dsl.Model]):
     import pickle
 
     def load_pickle(object_file):
@@ -132,7 +132,7 @@ def validate_model(model_file: dsl.InputPath()):
 
         return target_object
 
-    model = load_pickle(model_file)
+    model = load_pickle(model_file.path)
 
     input_values = [[5, 3, 1.6, 0.2]]
 
@@ -146,10 +146,10 @@ def validate_model(model_file: dsl.InputPath()):
     packages_to_install=["pandas", "scikit-learn"],
 )
 def evaluate_model(
-    X_test_file: dsl.InputPath(),
-    y_test_file: dsl.InputPath(),
-    model_file: dsl.InputPath(),
-    mlpipeline_metrics_file: dsl.OutputPath("Metrics"),
+    X_test_file: dsl.Input[dsl.Dataset],
+    y_test_file:dsl.Input[dsl.Dataset],
+    model_file: dsl.Input[dsl.Model],
+    mlpipeline_metrics_file: dsl.Output[dsl.Metrics],
 ):
     import json
     import pickle
@@ -162,9 +162,9 @@ def evaluate_model(
 
         return target_object
 
-    X_test = load_pickle(X_test_file)
-    y_test = load_pickle(y_test_file)
-    model = load_pickle(model_file)
+    X_test = load_pickle(X_test_file.path)
+    y_test = load_pickle(y_test_file.path)
+    model = load_pickle(model_file.path)
 
     y_pred = model.predict(X_test)
 
@@ -181,7 +181,7 @@ def evaluate_model(
         ]
     }
 
-    with open(mlpipeline_metrics_file, "w") as f:
+    with open(mlpipeline_metrics_file.path, "w") as f:
         json.dump(metrics, f)
 
 
@@ -192,13 +192,13 @@ def iris_pipeline(model_obc: str = "iris-model"):
     data_prep_task = data_prep()
 
     train_model_task = train_model(
-        X_train_file = data_prep_task.outputs["X_train"],
-        y_train_file = data_prep_task.outputs["y_train"],
+        X_train_file = data_prep_task.outputs["X_train_file"],
+        y_train_file = data_prep_task.outputs["y_train_file"],
     )
 
     evaluate_model_task = evaluate_model(  # noqa: F841
-        X_train_file = data_prep_task.outputs["X_test"],
-        y_train_file = data_prep_task.outputs["y_test"],
+        X_test_file = data_prep_task.outputs["X_test_file"],
+        y_test_file = data_prep_task.outputs["y_test_file"],
         model_file = train_model_task.output,
     )
 
