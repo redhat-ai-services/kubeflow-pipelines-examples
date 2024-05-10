@@ -9,7 +9,14 @@ repos:
       - id: check-yaml
         args: [--allow-multiple-documents]
       - id: check-added-large-files
-  - repo: https://github.com/psf/black
-    rev: 22.10.0
-    hooks:
-      - id: black
+repos:
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  # Ruff version.
+  rev: v0.3.5
+  hooks:
+    # Run the linter.
+    - id: ruff
+      args: [ --fix ]
+    # Run the formatter.
+    - id: ruff-format
+
