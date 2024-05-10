@@ -15,21 +15,21 @@ bearer_token = os.environ["BEARER_TOKEN"]
 @dsl.component(
     base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest"
 )
-def create_artifact(my_artifact: dsl.OutputPath()):
+def create_artifact(my_artifact: dsl.Output[dsl.Artifact]):
     import pickle
 
     artifact = "1, 2, 3, 4"
 
-    with open(my_artifact, "bw") as f:
+    with open(my_artifact.path, "bw") as f:
         pickle.dump(artifact, f)
 
 @dsl.component(
     base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest"
 )
-def consume_artifact(my_artifact: dsl.InputPath()):
+def consume_artifact(my_artifact: dsl.Input[dsl.Artifact]):
     import pickle
 
-    with open(my_artifact, "br") as f:
+    with open(my_artifact.path, "br") as f:
         artifact = pickle.load(f)
 
     print(artifact)
