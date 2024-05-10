@@ -1,11 +1,14 @@
-"""Example of a pipeline to demonstrate a simple data science workflow."""
+"""
+Example of a pipeline to demonstrate a simple data science workflow.
+
+This pipeline example is currently broken.
+"""
 import os
 
 from dotenv import load_dotenv
 
-import kfp
-
-import kfp_tekton
+from kfp import dsl
+import kfp.compiler
 
 import pandas as pd
 
@@ -14,12 +17,15 @@ load_dotenv(override=True)
 kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
 bearer_token = os.environ["BEARER_TOKEN"]
 
-
+@dsl.component(
+    base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
+    packages_to_install=["pandas", "scikit-learn"],
+)
 def data_prep(
-    X_train_file: kfp.components.OutputPath(),
-    X_test_file: kfp.components.OutputPath(),
-    y_train_file: kfp.components.OutputPath(),
-    y_test_file: kfp.components.OutputPath(),
+    X_train_file: dsl.OutputPath(),
+    X_test_file: dsl.OutputPath(),
+    y_train_file: dsl.OutputPath(),
+    y_test_file: dsl.OutputPath(),
 ):
     import pickle
 
@@ -70,15 +76,21 @@ def data_prep(
     save_pickle(y_train_file, y_train)
     save_pickle(y_test_file, y_test)
 
-
+@dsl.component(
+    base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
+    packages_to_install=["pandas", "scikit-learn"],
+)
 def validate_data():
     pass
 
-
+@dsl.component(
+    base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
+    packages_to_install=["pandas", "scikit-learn"],
+)
 def train_model(
-    X_train_file: kfp.components.InputPath(),
-    y_train_file: kfp.components.InputPath(),
-    model_file: kfp.components.OutputPath(),
+    X_train_file: dsl.InputPath(),
+    y_train_file: dsl.InputPath(),
+    model_file: dsl.OutputPath(),
 ):
     import pickle
 
@@ -107,8 +119,11 @@ def train_model(
 
     save_pickle(model_file, model)
 
-
-def validate_model(model_file: kfp.components.InputPath()):
+@dsl.component(
+    base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
+    packages_to_install=["pandas", "scikit-learn"],
+)
+def validate_model(model_file: dsl.InputPath()):
     import pickle
 
     def load_pickle(object_file):
@@ -126,12 +141,15 @@ def validate_model(model_file: kfp.components.InputPath()):
 
     print(f"Response: {result}")
 
-
+@dsl.component(
+    base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
+    packages_to_install=["pandas", "scikit-learn"],
+)
 def evaluate_model(
-    X_test_file: kfp.components.InputPath(),
-    y_test_file: kfp.components.InputPath(),
-    model_file: kfp.components.InputPath(),
-    mlpipeline_metrics_file: kfp.components.OutputPath("Metrics"),
+    X_test_file: dsl.InputPath(),
+    y_test_file: dsl.InputPath(),
+    model_file: dsl.InputPath(),
+    mlpipeline_metrics_file: dsl.OutputPath("Metrics"),
 ):
     import json
     import pickle
@@ -167,60 +185,29 @@ def evaluate_model(
         json.dump(metrics, f)
 
 
-data_prep_op = kfp.components.create_component_from_func(
-    data_prep,
-    base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
-    packages_to_install=["pandas", "scikit-learn"],
-)
-
-validate_data_op = kfp.components.create_component_from_func(
-    validate_data,
-    base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
-    packages_to_install=["pandas"],
-)
-
-train_model_op = kfp.components.create_component_from_func(
-    train_model,
-    base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
-    packages_to_install=["pandas", "scikit-learn"],
-)
-
-evaluate_model_op = kfp.components.create_component_from_func(
-    evaluate_model,
-    base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
-    packages_to_install=["pandas", "scikit-learn"],
-)
-
-validate_model_op = kfp.components.create_component_from_func(
-    validate_model,
-    base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
-    packages_to_install=["pandas", "scikit-learn"],
-)
-
-
 @kfp.dsl.pipeline(
     name="Iris Pipeline",
 )
 def iris_pipeline(model_obc: str = "iris-model"):
-    data_prep_task = data_prep_op()
+    data_prep_task = data_prep()
 
-    train_model_task = train_model_op(
-        data_prep_task.outputs["X_train"],
-        data_prep_task.outputs["y_train"],
+    train_model_task = train_model(
+        X_train_file = data_prep_task.outputs["X_train"],
+        y_train_file = data_prep_task.outputs["y_train"],
     )
 
-    evaluate_model_task = evaluate_model_op(  # noqa: F841
-        data_prep_task.outputs["X_test"],
-        data_prep_task.outputs["y_test"],
-        train_model_task.output,
+    evaluate_model_task = evaluate_model(  # noqa: F841
+        X_train_file = data_prep_task.outputs["X_test"],
+        y_train_file = data_prep_task.outputs["y_test"],
+        model_file = train_model_task.output,
     )
 
-    validate_model_task = validate_model_op(train_model_task.output)  # noqa: F841
+    validate_model_task = validate_model(model_file = train_model_task.output)  # noqa: F841
 
 
 if __name__ == "__main__":
     print(f"Connecting to kfp: {kubeflow_endpoint}")
-    client = kfp_tekton.TektonClient(
+    client = kfp.Client(
         host=kubeflow_endpoint,
         existing_token=bearer_token,
     )

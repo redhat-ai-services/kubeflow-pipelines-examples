@@ -3,14 +3,15 @@ Example of a pipeline to demonstrate running code built into the container image
 
 This pipeline uses the kfp.dsl.ContainerOp() function which throws some warnings.
 Would be nice to find a better way to run code build into the container image.
+
+This pipeline example is currently broken.
 """
 import os
 
 from dotenv import load_dotenv
 
-import kfp
-
-import kfp_tekton
+from kfp import dsl
+import kfp.compiler
 
 load_dotenv(override=True)
 
@@ -21,7 +22,7 @@ bearer_token = os.environ["BEARER_TOKEN"]
 @kfp.dsl.pipeline(
     name="container-pipeline",
 )
-def add_pipeline(a="1", b="7"):
+def add_pipeline(a: float = 1.0, b: float = 7.0):
     """
     Pipeline to add values.
 
@@ -37,11 +38,11 @@ def add_pipeline(a="1", b="7"):
 
 
 if __name__ == "__main__":
-    client = kfp_tekton.TektonClient(
+    client = kfp.Client(
         host=kubeflow_endpoint,
         existing_token=bearer_token,
     )
-    arguments = {"a": "7", "b": "8"}
+    arguments = {"a": 7.0, "b": 8.0}
     client.create_run_from_pipeline_func(
         add_pipeline, arguments=arguments, experiment_name="submitted-example"
     )
