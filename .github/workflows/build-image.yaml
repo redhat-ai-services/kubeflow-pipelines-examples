@@ -10,7 +10,7 @@ jobs:
     name: Build Image
     runs-on: ubuntu-latest
     env:
-      BASE_IMAGE: "registry.access.redhat.com/ubi8/python-39:latest"
+      BASE_IMAGE: "registry.access.redhat.com/ubi9/python-311:latest"
       REGISTRY: quay.io/rhiap
       IMAGE_NAME: kubeflow-example
       MAIN_TAG: latest-${{ github.sha }}
