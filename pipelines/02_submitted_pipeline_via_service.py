@@ -36,9 +36,9 @@ if __name__ == "__main__":
     sa_token_path = "/run/secrets/kubernetes.io/serviceaccount/token"  # noqa: S105
     if os.path.isfile(sa_token_path):
         with open(sa_token_path) as f:
-            token = f.read().rstrip()
+            bearer_token = f.read().rstrip()
     else:
-        token = os.environ["BEARER_TOKEN"]
+        bearer_token = os.environ["BEARER_TOKEN"]
 
     # Check if the script is running in a k8s pod
     # Get the CA from the service account if it is
@@ -51,7 +51,7 @@ if __name__ == "__main__":
 
     client = kfp.Client(
         host=kubeflow_endpoint,
-        existing_token=token,
+        existing_token=bearer_token,
         ssl_ca_cert=ssl_ca_cert,
     )
 
