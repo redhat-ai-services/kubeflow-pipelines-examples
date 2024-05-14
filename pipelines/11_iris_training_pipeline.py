@@ -9,7 +9,6 @@ from kfp import dsl
 load_dotenv(override=True)
 
 kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
-bearer_token = os.environ["BEARER_TOKEN"]
 
 
 @dsl.component(
@@ -204,9 +203,27 @@ def iris_pipeline(model_obc: str = "iris-model"):
 
 if __name__ == "__main__":
     print(f"Connecting to kfp: {kubeflow_endpoint}")
+
+    sa_token_path = "/run/secrets/kubernetes.io/serviceaccount/token"  # noqa: S105
+    if os.path.isfile(sa_token_path):
+        with open(sa_token_path) as f:
+            token = f.read().rstrip()
+    else:
+        token = os.environ["BEARER_TOKEN"]
+
+    # Check if the script is running in a k8s pod
+    # Get the CA from the service account if it is
+    # Skip the CA if it is not
+    sa_ca_cert = "/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
+    if os.path.isfile(sa_ca_cert):
+        ssl_ca_cert = sa_ca_cert
+    else:
+        ssl_ca_cert = None
+
     client = kfp.Client(
         host=kubeflow_endpoint,
         existing_token=bearer_token,
+        ssl_ca_cert=ssl_ca_cert,
     )
     result = client.create_run_from_pipeline_func(iris_pipeline, arguments={}, experiment_name="iris")
     print(f"Starting pipeline run with run_id: {result.run_id}")
