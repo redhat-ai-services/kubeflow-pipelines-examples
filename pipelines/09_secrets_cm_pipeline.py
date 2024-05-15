@@ -1,14 +1,12 @@
 """Example of a pipeline to demonstrate accessing secrets/config maps in a pipeline.
-
-This pipeline example is currently broken.
 """
 
 import os
 
 import kfp.compiler
-import kubernetes
 from dotenv import load_dotenv
 from kfp import dsl
+from kfp import kubernetes
 
 load_dotenv(override=True)
 
@@ -33,31 +31,13 @@ def env_vars_pipeline():
     Pipeline to take the value of a, add 4 to it and then
     perform a second task to take the put of the first task and add b.
     """
-    secret_print_task = print_envvar(env_var="my-env-var")
+    secret_print_task = print_envvar(env_var="my-secret-env-var")
+    secret_print_task.set_caching_options(False)
+    kubernetes.use_secret_as_env(secret_print_task, secret_name = "my-secret", secret_key_to_env={"my-secret-data": "my-secret-env-var"})
 
-    secret_print_task.set_env_variable(
-        "my-env-var",
-        kubernetes.client.V1EnvVar(
-            name="my-env-var",
-            value_from=kubernetes.client.V1EnvVarSource(
-                secret_key_ref=kubernetes.client.V1SecretKeySelector(name="my-secret", key="my-secret-data")
-            ),
-        ),
-    )
-
-    cm_print_task = print_envvar(env_var="my-env-var")
-
-    cm_print_task.set_env_variable(
-        "my-env-var",
-        kubernetes.client.V1EnvVar(
-            name="my-env-var",
-            value_from=kubernetes.client.V1EnvVarSource(
-                config_map_key_ref=kubernetes.client.V1ConfigMapKeySelector(
-                    name="my-configmap", key="my-configmap-data"
-                )
-            ),
-        ),
-    )
+    cm_print_task = print_envvar(env_var="my-cm-env-var")
+    cm_print_task.set_caching_options(False)
+    kubernetes.use_config_map_as_env(cm_print_task, config_map_name="my-configmap", config_map_key_to_env={"my-configmap-data": "my-cm-env-var"})
 
 
 if __name__ == "__main__":
