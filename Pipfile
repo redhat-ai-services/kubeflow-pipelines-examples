@@ -5,10 +5,10 @@ name = "pypi"
 
 [packages]
 kfp = "*"
+kfp-kubernetes = "*"
 python-dotenv = "*"
 scikit-learn = "*"
 pandas = "*"
-kubernetes = "*"
 
 [dev-packages]
 ruff = "*"
