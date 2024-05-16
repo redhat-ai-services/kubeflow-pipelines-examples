@@ -6,9 +6,9 @@ This pipeline example is currently broken.
 import os
 
 import kfp.compiler
-import kubernetes
 from dotenv import load_dotenv
 from kfp import dsl
+from kfp import kubernetes
 
 load_dotenv(override=True)
 
@@ -32,13 +32,7 @@ def add_pipeline(a: float = 1.0, b: float = 7.0):
     perform a second task to take the put of the first task and add b.
     """
     first_add_task = add(a=a, b=4.0)
-
-    vol = kubernetes.client.V1Volume(
-        name="my-data",
-        persistent_volume_claim=kubernetes.client.V1PersistentVolumeClaimVolumeSource(claim_name="my-data"),
-    )
-
-    first_add_task.add_pvolumes({"/opt/data": vol})
+    kubernetes.mount_pvc(first_add_task, pvc_name="my-data", mount_path="/opt/data")
 
     second_add_task = add(a=first_add_task.output, b=b)  # noqa: F841
 
