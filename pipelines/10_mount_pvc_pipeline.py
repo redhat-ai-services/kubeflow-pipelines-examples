@@ -1,6 +1,4 @@
 """Example of a pipeline to demonstrate mounting a pvc to a task in a pipeline.
-
-This pipeline example is currently broken.
 """
 
 import os
