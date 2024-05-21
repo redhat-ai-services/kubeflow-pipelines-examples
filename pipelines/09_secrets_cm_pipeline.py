@@ -1,5 +1,4 @@
-"""Example of a pipeline to demonstrate accessing secrets/config maps in a pipeline.
-"""
+"""Example of a pipeline to demonstrate accessing secrets/config maps in a pipeline."""
 
 import os
 
@@ -33,11 +32,15 @@ def env_vars_pipeline():
     """
     secret_print_task = print_envvar(env_var="my-secret-env-var")
     secret_print_task.set_caching_options(False)
-    kubernetes.use_secret_as_env(secret_print_task, secret_name = "my-secret", secret_key_to_env={"my-secret-data": "my-secret-env-var"})
+    kubernetes.use_secret_as_env(
+        secret_print_task, secret_name="my-secret", secret_key_to_env={"my-secret-data": "my-secret-env-var"}
+    )
 
     cm_print_task = print_envvar(env_var="my-cm-env-var")
     cm_print_task.set_caching_options(False)
-    kubernetes.use_config_map_as_env(cm_print_task, config_map_name="my-configmap", config_map_key_to_env={"my-configmap-data": "my-cm-env-var"})
+    kubernetes.use_config_map_as_env(
+        cm_print_task, config_map_name="my-configmap", config_map_key_to_env={"my-configmap-data": "my-cm-env-var"}
+    )
 
 
 if __name__ == "__main__":

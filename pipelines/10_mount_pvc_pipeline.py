@@ -1,5 +1,4 @@
-"""Example of a pipeline to demonstrate mounting a pvc to a task in a pipeline.
-"""
+"""Example of a pipeline to demonstrate mounting a pvc to a task in a pipeline."""
 
 import os
 
