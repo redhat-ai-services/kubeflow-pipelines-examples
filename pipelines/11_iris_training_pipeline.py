@@ -9,10 +9,10 @@ from kfp import dsl
 load_dotenv(override=True)
 
 kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
-
+base_image = os.getenv("BASE_IMAGE", "image-registry.openshift-image-registry.svc:5000/openshift/python:latest")
 
 @dsl.component(
-    base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
+    base_image=base_image,
     packages_to_install=["pandas", "scikit-learn"],
 )
 def data_prep(
@@ -69,7 +69,7 @@ def data_prep(
 
 
 @dsl.component(
-    base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
+    base_image=base_image,
     packages_to_install=["pandas", "scikit-learn"],
 )
 def validate_data():
@@ -77,7 +77,7 @@ def validate_data():
 
 
 @dsl.component(
-    base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
+    base_image=base_image,
     packages_to_install=["pandas", "scikit-learn"],
 )
 def train_model(
@@ -115,30 +115,7 @@ def train_model(
 
 
 @dsl.component(
-    base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
-    packages_to_install=["pandas", "scikit-learn"],
-)
-def validate_model(model_file: dsl.Input[dsl.Model]):
-    import pickle
-
-    def load_pickle(object_file):
-        with open(object_file, "rb") as f:
-            target_object = pickle.load(f)  # noqa: S301
-
-        return target_object
-
-    model = load_pickle(model_file.path)
-
-    input_values = [[5, 3, 1.6, 0.2]]
-
-    print(f"Performing test prediction on {input_values}")
-    result = model.predict(input_values)
-
-    print(f"Response: {result}")
-
-
-@dsl.component(
-    base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest",
+    base_image=base_image,
     packages_to_install=["pandas", "scikit-learn"],
 )
 def evaluate_model(
@@ -181,6 +158,51 @@ def evaluate_model(
         json.dump(metrics, f)
 
 
+@dsl.component(
+    base_image=base_image,
+    packages_to_install=["pandas", "skl2onnx"],
+)
+def model_to_onnx(model_file: dsl.Input[dsl.Model], onnx_model_file: dsl.Output[dsl.Model]):
+
+    import pickle
+
+    from skl2onnx import to_onnx
+    from skl2onnx.common.data_types import FloatTensorType
+
+    def load_pickle(object_file):
+        with open(object_file, "rb") as f:
+            target_object = pickle.load(f)  # noqa: S301
+
+        return target_object
+
+    model = load_pickle(model_file.path)
+
+    initial_type = [('float_input', FloatTensorType([None, 4]))]
+    onnx_model = to_onnx(model, initial_types=initial_type)
+    
+    with open(onnx_model_file.path, "wb") as f:
+        f.write(onnx_model.SerializeToString())
+
+
+@dsl.component(
+    base_image=base_image,
+    packages_to_install=["pandas", "onnxruntime"],
+)
+def validate_model(onnx_model_file: dsl.Input[dsl.Model]):
+    import onnxruntime
+
+    session = onnxruntime.InferenceSession(onnx_model_file.path)
+
+    input_name = session.get_inputs()[0].name
+    label_name = session.get_outputs()[0].name
+
+    input_values = [[5, 3, 1.6, 0.2]]
+
+    print(f"Performing test prediction on {input_values}")
+    result = session.run([label_name], {input_name: input_values})[0]
+
+    print(f"Response: {result}")
+
 @kfp.dsl.pipeline(
     name="Iris Pipeline",
 )
@@ -198,7 +220,11 @@ def iris_pipeline(model_obc: str = "iris-model"):
         model_file=train_model_task.output,
     )
 
-    validate_model_task = validate_model(model_file=train_model_task.output)  # noqa: F841
+    model_to_onnx_task =  model_to_onnx(  # noqa: F841
+        model_file=train_model_task.output,
+    )
+
+    validate_model_task = validate_model(onnx_model_file=model_to_onnx_task.output)  # noqa: F841
 
 
 if __name__ == "__main__":
