@@ -11,6 +11,7 @@ load_dotenv(override=True)
 kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
 base_image = os.getenv("BASE_IMAGE", "image-registry.openshift-image-registry.svc:5000/openshift/python:latest")
 
+
 @dsl.component(
     base_image=base_image,
     packages_to_install=["pandas", "scikit-learn"],
@@ -163,7 +164,6 @@ def evaluate_model(
     packages_to_install=["pandas", "skl2onnx"],
 )
 def model_to_onnx(model_file: dsl.Input[dsl.Model], onnx_model_file: dsl.Output[dsl.Model]):
-
     import pickle
 
     from skl2onnx import to_onnx
@@ -177,9 +177,9 @@ def model_to_onnx(model_file: dsl.Input[dsl.Model], onnx_model_file: dsl.Output[
 
     model = load_pickle(model_file.path)
 
-    initial_type = [('float_input', FloatTensorType([None, 4]))]
+    initial_type = [("float_input", FloatTensorType([None, 4]))]
     onnx_model = to_onnx(model, initial_types=initial_type)
-    
+
     with open(onnx_model_file.path, "wb") as f:
         f.write(onnx_model.SerializeToString())
 
@@ -203,6 +203,7 @@ def validate_model(onnx_model_file: dsl.Input[dsl.Model]):
 
     print(f"Response: {result}")
 
+
 @kfp.dsl.pipeline(
     name="Iris Pipeline",
 )
@@ -220,7 +221,7 @@ def iris_pipeline(model_obc: str = "iris-model"):
         model_file=train_model_task.output,
     )
 
-    model_to_onnx_task =  model_to_onnx(  # noqa: F841
+    model_to_onnx_task = model_to_onnx(  # noqa: F841
         model_file=train_model_task.output,
     )
 
