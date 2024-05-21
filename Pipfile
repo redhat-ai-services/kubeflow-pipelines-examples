@@ -9,6 +9,8 @@ kfp-kubernetes = "*"
 python-dotenv = "*"
 scikit-learn = "*"
 pandas = "*"
+skl2onnx = "*"
+onnxruntime = "*"
 
 [dev-packages]
 ruff = "*"
