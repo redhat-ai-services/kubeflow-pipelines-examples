@@ -4,7 +4,7 @@ metadata:
   name: my-data
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 5Gi
