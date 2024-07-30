@@ -232,7 +232,7 @@ if __name__ == "__main__":
     print(f"Connecting to kfp: {kubeflow_endpoint}")
 
     sa_token_path = "/run/secrets/kubernetes.io/serviceaccount/token"  # noqa: S105
-    if os.environ["BEARER_TOKEN"]:
+    if "BEARER_TOKEN" in os.environ:
         bearer_token = os.environ["BEARER_TOKEN"]
     elif os.path.isfile(sa_token_path):
         with open(sa_token_path) as f:
