@@ -4,10 +4,13 @@ metadata:
   name: pipelines-definition
 spec:
   apiServer:
+    caBundleFileMountPath: ""
     stripEOF: true
     dbConfigConMaxLifetimeSec: 120
     applyTektonCustomResource: true
+    caBundleFileName: ""
     deploy: true
+    artifactSignedURLExpirySeconds: 60
     enableSamplePipeline: false
     autoUpdatePipelineDefaultVersion: true
     archiveLogs: false
@@ -17,20 +20,23 @@ spec:
     collectMetrics: true
     injectDefaultScript: true
   database:
+    disableHealthCheck: false
     mariaDB:
       deploy: true
       pipelineDBName: mlpipeline
       pvcSize: 10Gi
       username: mlpipeline
+  dspVersion: v2
   objectStorage:
     minio:
       bucket: data-science-pipelines
       deploy: true
-      image: quay.io/minio/minio:RELEASE.2023-06-19T19-52-50Z
+      image: quay.io/minio/minio:RELEASE.2024-10-02T17-50-41Z
       pvcSize: 10Gi
   persistenceAgent:
     deploy: true
     numWorkers: 2
+  podToPodTLS: true
   scheduledWorkflow:
     cronScheduleTimezone: UTC
     deploy: true

@@ -4,27 +4,25 @@ This repo is intended to provide examples for different features of kubeflow pip
 
 ## Quick Start
 
-1. Install the OpenShift Pipelines operator via Operator Hub
-2. Install the RHODS operator via Operator Hub
-3. Create a data science project
-4. Create a DSPA instance in your project:
+1. Install the RHOAI operator via Operator Hub
+1. Create a data science project
+1. Create a DSPA instance in your project with the following command:
     ```
     oc apply -f manifests/dataSciencePipelineApplication.yaml
     ```
-5. Deploy any additional resources required for specific examples in the manifests folder.
-6. Create the .env file
-    * Copy the example.env file to .env
+1. Create the .env file
+    * Create a new file named .env and copy the contents of the file example.env into it
     * Update the storage class if you are not utilizing ODF
     * Update the `KUBEFLOW_ENDPOINT` url with the URL for your instance of the data science pipeline instance:
         ```sh
         route=$(oc get route ds-pipeline-pipelines-definition -o=jsonpath='{.spec.host}')
         echo "https://${route}"
         ```
-    * Get your token by logging into ocp via oc and running the following command and setting the result as `BEARER_TOKEN`:
+    * Get your token by logging into ocp via oc and running the following command and setting the result as the `BEARER_TOKEN`:
         ```sh
         oc whoami --show-token
         ```
-7. Create and activate a virtual environment:
+1. Create and activate a virtual environment:
     * If not already installed, install pipenv:
         ```
         pip install pipenv
@@ -38,8 +36,19 @@ This repo is intended to provide examples for different features of kubeflow pip
         pipenv shell
         ```
 
-Your environment should be all ready to go.  Try out the first pipeline by running:
+Your environment should be all ready to go. Now we can start running the pipeline examples.
 
-```
-python pipelines/00_compiled_pipeline.py
-```
+All the pipeline examples are in the `pipelines` folder
+
+## Python Examples
+
+1. `00_compiled_pipeline.py`
+
+    * This is a very basic example of how to create a kfp pipeline. It is adding 4 to the value of parameter `a` that we pass, and then adding this result to the value of parameter `b`. 
+    * The first step is to compile the pipeline into a yaml file. To run this execute the following command. This will generate a yaml file named '00_compiled_pipeline.yaml'
+    ```
+    python pipelines/00_compiled_pipeline.py
+    ```
+    * Now go to RHOAI and into the Data Science Pipelines section. Click on `Import pipeline` and upload the generated yaml file.
+    * To run this pipeline click on the Create Run option.
+    * To check the run, go to the Experiments section in RHOAI.
