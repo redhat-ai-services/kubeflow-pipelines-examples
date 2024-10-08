@@ -34,4 +34,8 @@ if __name__ == "__main__":
         existing_token=bearer_token,
         ssl_ca_cert=ssl_ca_cert,
     )
-    print(client.list_experiments())
+    print(f"""The experiment list is as follows: 
+          {client.list_experiments()}
+            """)
+    print(f""" The pipelines list is as follows:
+          {client.list_pipelines()}""")

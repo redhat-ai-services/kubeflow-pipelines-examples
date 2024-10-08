@@ -15,4 +15,8 @@ if __name__ == "__main__":
         host=kubeflow_endpoint,
         existing_token=bearer_token,
     )
-    print(client.list_experiments())
+    print(f"""The experiment list is as follows: 
+          {client.list_experiments()}
+            """)
+    print(f""" The pipelines list is as follows:
+          {client.list_pipelines()}""")

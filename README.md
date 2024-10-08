@@ -52,3 +52,11 @@ All the pipeline examples are in the `pipelines` folder
     * Now go to RHOAI and into the Data Science Pipelines section. Click on `Import pipeline` and upload the generated yaml file.
     * To run this pipeline click on the Create Run option.
     * To check the run, go to the Experiments section in RHOAI.
+
+2. `01_test_connection_via_route.py`
+
+    * This pipeline just checks if we can connect to kfp with the route that we entered in the .env file. If we can connect to it, it also displays the list of experiements and the list of the pipelines.
+    * To run this example use the following command. You will be able to see the output in the terminal.
+    ```
+    python pipelines/01_test_connection_via_route.py
+    ```
