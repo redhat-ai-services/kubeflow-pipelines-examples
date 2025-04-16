@@ -13,29 +13,26 @@ kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
 bearer_token = os.environ["BEARER_TOKEN"]
 
 
-@dsl.component(base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest")
-def add(a: float, b: float) -> float:
-    """Calculate the sum of the two arguments."""
-    return a + b
+@dsl.component(base_image="quay.io/modh/cuda-notebooks:cuda-jupyter-minimal-ubi9-python-3.11-20250326")
+def nvidia_smi():
+    """Use the nvidia-smi command to """
+    import os
+
+    os.system("nvidia-smi")
 
 
 @dsl.pipeline()
-def add_pipeline(a: float = 1.0, b: float = 7.0):
-    """Pipeline to add values.
-
-    Pipeline to take the value of a, add 4 to it and then
-    perform a second task to take the put of the first task and add b.
+def nvidia_smi_pipeline():
+    """Pipeline to execute a task using GPUs
     """
-    first_add_task = add(a=a, b=4.0)
+    nvidia_smi_task = nvidia_smi()
 
     # Set the accelerator type and set the request/limit to 1
     # Note: You cannot request different values for the request/limit
-    first_add_task.set_accelerator_type("nvidia.com/gpu").set_accelerator_limit(1)
+    nvidia_smi_task.set_accelerator_type("nvidia.com/gpu").set_accelerator_limit(1)
 
     # Set the toleration for the GPU node
-    kubernetes.add_toleration(first_add_task, key="nvidia.com/gpu", operator="Exists", effect="NoSchedule")
-
-    second_add_task = add(a=first_add_task.output, b=b)  # noqa: F841
+    kubernetes.add_toleration(nvidia_smi_task, key="nvidia.com/gpu", operator="Exists", effect="NoSchedule")
 
 
 if __name__ == "__main__":
@@ -62,5 +59,5 @@ if __name__ == "__main__":
         existing_token=bearer_token,
         ssl_ca_cert=ssl_ca_cert,
     )
-    result = client.create_run_from_pipeline_func(add_pipeline, arguments={}, experiment_name="iris")
+    result = client.create_run_from_pipeline_func(nvidia_smi_pipeline, arguments={}, experiment_name="iris")
     print(f"Starting pipeline run with run_id: {result.run_id}")
