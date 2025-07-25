@@ -11,6 +11,7 @@ scikit-learn = "*"
 pandas = "*"
 skl2onnx = "*"
 onnxruntime = "*"
+loguru = "*"
 
 [dev-packages]
 ruff = "*"

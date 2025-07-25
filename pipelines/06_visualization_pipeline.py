@@ -6,16 +6,10 @@ get a visualization functioning.
 This pipeline example is currently broken.
 """
 
-import os
 
 import kfp.compiler
-from dotenv import load_dotenv
 from kfp import dsl
-
-load_dotenv(override=True)
-
-kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
-bearer_token = os.environ["BEARER_TOKEN"]
+from kfp_helper import execute_pipeline_run
 
 
 @dsl.component(base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest")
@@ -71,8 +65,4 @@ def visualization_pipeline():
 
 
 if __name__ == "__main__":
-    client = kfp.Client(
-        host=kubeflow_endpoint,
-        existing_token=bearer_token,
-    )
-    client.create_run_from_pipeline_func(visualization_pipeline, arguments={}, experiment_name="visualization-example")
+    execute_pipeline_run(pipeline=visualization_pipeline, experiment="visualization-example", arguments={})

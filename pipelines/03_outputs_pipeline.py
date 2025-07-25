@@ -1,16 +1,10 @@
 """Example of a pipeline returning multiple values."""
 
-import os
 from typing import NamedTuple
 
 import kfp.compiler
-from dotenv import load_dotenv
 from kfp import dsl
-
-load_dotenv(override=True)
-
-kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
-bearer_token = os.environ["BEARER_TOKEN"]
+from kfp_helper import execute_pipeline_run
 
 
 @dsl.component(base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest")
@@ -35,14 +29,4 @@ def multiple_values_pipeline(a: float = 1.0, b: float = 7.0):
 
 
 if __name__ == "__main__":
-    client = kfp.Client(
-        host=kubeflow_endpoint,
-        existing_token=bearer_token,
-    )
-
-    arguments = {"a": 7.0, "b": 8.0}
-    client.create_run_from_pipeline_func(
-        multiple_values_pipeline,
-        arguments=arguments,
-        experiment_name="outputs-example",
-    )
+    execute_pipeline_run(pipeline=multiple_values_pipeline, experiment="artifact-example", arguments={})

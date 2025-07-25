@@ -3,12 +3,9 @@
 import os
 
 import kfp.compiler
-from dotenv import load_dotenv
 from kfp import dsl
+from kfp_helper import execute_pipeline_run
 
-load_dotenv(override=True)
-
-kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
 base_image = os.getenv("BASE_IMAGE", "image-registry.openshift-image-registry.svc:5000/openshift/python:latest")
 
 
@@ -229,28 +226,4 @@ def iris_pipeline(model_obc: str = "iris-model"):
 
 
 if __name__ == "__main__":
-    print(f"Connecting to kfp: {kubeflow_endpoint}")
-
-    sa_token_path = "/run/secrets/kubernetes.io/serviceaccount/token"  # noqa: S105
-    if "BEARER_TOKEN" in os.environ:
-        bearer_token = os.environ["BEARER_TOKEN"]
-    elif os.path.isfile(sa_token_path):
-        with open(sa_token_path) as f:
-            bearer_token = f.read().rstrip()
-
-    # Check if the script is running in a k8s pod
-    # Get the CA from the service account if it is
-    # Skip the CA if it is not
-    sa_ca_cert = "/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
-    if os.path.isfile(sa_ca_cert) and "svc" in kubeflow_endpoint:
-        ssl_ca_cert = sa_ca_cert
-    else:
-        ssl_ca_cert = None
-
-    client = kfp.Client(
-        host=kubeflow_endpoint,
-        existing_token=bearer_token,
-        ssl_ca_cert=ssl_ca_cert,
-    )
-    result = client.create_run_from_pipeline_func(iris_pipeline, arguments={}, experiment_name="iris")
-    print(f"Starting pipeline run with run_id: {result.run_id}")
+    execute_pipeline_run(pipeline=iris_pipeline, experiment="iris", arguments={})

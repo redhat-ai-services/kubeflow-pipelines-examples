@@ -4,16 +4,10 @@ runMetrics appear to be depreciated in kfp v2 api so implement
 this feature at your own risk.
 """
 
-import os
 
 import kfp.compiler
-from dotenv import load_dotenv
 from kfp import dsl
-
-load_dotenv(override=True)
-
-kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
-bearer_token = os.environ["BEARER_TOKEN"]
+from kfp_helper import execute_pipeline_run
 
 
 @dsl.component(base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest")
@@ -59,9 +53,4 @@ def metrics_pipeline():
 
 
 if __name__ == "__main__":
-    client = kfp.Client(
-        host=kubeflow_endpoint,
-        existing_token=bearer_token,
-    )
-    arguments = {}
-    client.create_run_from_pipeline_func(metrics_pipeline, arguments=arguments, experiment_name="metrics-example")
+    execute_pipeline_run(pipeline=metrics_pipeline, experiment="metrics-example", arguments={})
