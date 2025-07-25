@@ -6,15 +6,9 @@ Would be nice to find a better way to run code build into the container image.
 This pipeline example is currently broken.
 """
 
-import os
 
 import kfp.compiler
-from dotenv import load_dotenv
-
-load_dotenv(override=True)
-
-kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
-bearer_token = os.environ["BEARER_TOKEN"]
+from kfp_helper import execute_pipeline_run
 
 
 @kfp.dsl.pipeline(
@@ -35,9 +29,5 @@ def add_pipeline(a: float = 1.0, b: float = 7.0):
 
 
 if __name__ == "__main__":
-    client = kfp.Client(
-        host=kubeflow_endpoint,
-        existing_token=bearer_token,
-    )
     arguments = {"a": 7.0, "b": 8.0}
-    client.create_run_from_pipeline_func(add_pipeline, arguments=arguments, experiment_name="submitted-example")
+    execute_pipeline_run(pipeline=add_pipeline, experiment="container-components-example", arguments=arguments)

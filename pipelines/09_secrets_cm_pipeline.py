@@ -1,16 +1,9 @@
 """Example of a pipeline to demonstrate accessing secrets/config maps in a pipeline."""
 
-import os
 
 import kfp.compiler
-from dotenv import load_dotenv
-from kfp import dsl
-from kfp import kubernetes
-
-load_dotenv(override=True)
-
-kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
-bearer_token = os.environ["BEARER_TOKEN"]
+from kfp import dsl, kubernetes
+from kfp_helper import execute_pipeline_run
 
 
 @dsl.component(base_image="image-registry.openshift-image-registry.svc:5000/openshift/python:latest")
@@ -33,7 +26,9 @@ def env_vars_pipeline():
     secret_print_task = print_envvar(env_var="my-secret-env-var")
     secret_print_task.set_caching_options(False)
     kubernetes.use_secret_as_env(
-        secret_print_task, secret_name="my-secret", secret_key_to_env={"my-secret-data": "my-secret-env-var"}
+        secret_print_task,
+        secret_name="my-secret", # noqa: S106
+        secret_key_to_env={"my-secret-data": "my-secret-env-var"},  
     )
 
     cm_print_task = print_envvar(env_var="my-cm-env-var")
@@ -44,8 +39,4 @@ def env_vars_pipeline():
 
 
 if __name__ == "__main__":
-    client = kfp.Client(
-        host=kubeflow_endpoint,
-        existing_token=bearer_token,
-    )
-    client.create_run_from_pipeline_func(env_vars_pipeline, arguments={}, experiment_name="secrets-configmap-example")
+    execute_pipeline_run(pipeline=env_vars_pipeline, experiment="secrets-configmap-example", arguments={})

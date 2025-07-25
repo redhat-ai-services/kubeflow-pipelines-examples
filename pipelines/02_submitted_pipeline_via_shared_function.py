@@ -1,8 +1,7 @@
-"""Example of a pipeline to demonstrate mounting a pvc to a task in a pipeline."""
+"""Example of a pipeline submitted directly to kfp using a shared function."""
 
 
-import kfp.compiler
-from kfp import dsl, kubernetes
+from kfp import dsl
 from kfp_helper import execute_pipeline_run
 
 
@@ -12,9 +11,7 @@ def add(a: float, b: float) -> float:
     return a + b
 
 
-@kfp.dsl.pipeline(
-    name="PVC Pipeline",
-)
+@dsl.pipeline()
 def add_pipeline(a: float = 1.0, b: float = 7.0):
     """Pipeline to add values.
 
@@ -22,11 +19,9 @@ def add_pipeline(a: float = 1.0, b: float = 7.0):
     perform a second task to take the put of the first task and add b.
     """
     first_add_task = add(a=a, b=4.0)
-    kubernetes.mount_pvc(first_add_task, pvc_name="my-data", mount_path="/opt/data")
-
     second_add_task = add(a=first_add_task.output, b=b)  # noqa: F841
 
 
 if __name__ == "__main__":
     arguments = {"a": 7.0, "b": 8.0}
-    execute_pipeline_run(pipeline=add_pipeline, experiment="pvc-example", arguments=arguments)
+    execute_pipeline_run(pipeline=add_pipeline, experiment="submitted-example", arguments=arguments)

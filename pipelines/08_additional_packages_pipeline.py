@@ -1,15 +1,9 @@
 """Example of a pipeline to demonstrate installing additional packages in the pipeline."""
 
-import os
 
 import kfp.compiler
-from dotenv import load_dotenv
 from kfp import dsl
-
-load_dotenv(override=True)
-
-kubeflow_endpoint = os.environ["KUBEFLOW_ENDPOINT"]
-bearer_token = os.environ["BEARER_TOKEN"]
+from kfp_helper import execute_pipeline_run
 
 
 @dsl.component(
@@ -42,13 +36,4 @@ def additional_packages_pipeline():
 
 
 if __name__ == "__main__":
-    client = kfp.Client(
-        host=kubeflow_endpoint,
-        existing_token=bearer_token,
-    )
-
-    client.create_run_from_pipeline_func(
-        additional_packages_pipeline,
-        arguments={},
-        experiment_name="additional-packages-example",
-    )
+    execute_pipeline_run(pipeline=additional_packages_pipeline, experiment="additional-packages-example", arguments={})
